@@ -4,6 +4,7 @@ const boxes = document.querySelectorAll(".box");
 
 let Board = ["", "", "", "", "", "", "", "", ""];
 let currentMarker = "X";
+let roundOver = false;
 
 function switchMarker() {
   if (currentMarker === "X") {
@@ -13,7 +14,7 @@ function switchMarker() {
   }
 }
 
-function checkWin(board) {
+function roundStatus(board) {
   if (
     (board[0] === board[1] &&
       board[1] === board[2] &&
@@ -57,6 +58,8 @@ function checkWin(board) {
       board[6] != "")
   ) {
     console.log("someone won");
+    console.log(`${currentMarker} Won the round`);
+    roundOver = true;
   }
 }
 
@@ -68,13 +71,23 @@ function displayBoard(array) {
   });
 }
 
+function playRound(box) {
+  if (roundOver) {
+    console.log("Round Over!");
+  } else {
+    if (Board[box.id] === "") {
+      Board[box.id] = `${currentMarker}`;
+      displayBoard(Board);
+      roundStatus(Board);
+      switchMarker();
+    } else {
+      console.log("Can't play there");
+    }
+  }
+}
+
 displayBoard(Board);
 
 boxes.forEach((box) => {
-  box.addEventListener("click", () => {
-    Board[box.id] = `${currentMarker}`;
-    displayBoard(Board);
-    checkWin(Board);
-    switchMarker();
-  });
+  box.addEventListener("click", () => playRound(box));
 });
