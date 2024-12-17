@@ -1,10 +1,12 @@
 console.log("hell0");
 
 const boxes = document.querySelectorAll(".box");
+const roundResult = document.getElementById("round-result");
 
 let Board = ["", "", "", "", "", "", "", "", ""];
 let currentMarker = "X";
 let roundOver = false;
+let round = 1;
 
 function switchMarker() {
   if (currentMarker === "X") {
@@ -60,7 +62,14 @@ function roundStatus(board) {
     console.log("someone won");
     console.log(`${currentMarker} Won the round`);
     roundOver = true;
+    roundResult.innerText = `${currentMarker} Won the Round! Click anywhere to start new Round`;
   }
+  else if(!Board.includes("")){
+    console.log("Round Draw");
+    roundOver = true;
+    roundResult.innerText = `Round Draw! Click anywhere to start new Round`;
+
+}
 }
 
 function displayBoard(array) {
@@ -74,6 +83,13 @@ function displayBoard(array) {
 function playRound(box) {
   if (roundOver) {
     console.log("Round Over!");
+    console.log("Start new Round");
+    Board = ["", "", "", "", "", "", "", "", ""];
+    currentMarker = "X";
+    roundOver = false;
+    displayBoard(Board);
+    round = round + 1;
+    roundResult.innerText = `Round ${round}`;
   } else {
     if (Board[box.id] === "") {
       Board[box.id] = `${currentMarker}`;
