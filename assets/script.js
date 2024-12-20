@@ -79,6 +79,60 @@ const playerFactory = (name, marker) => {
 const gameController = (function () {
   players = [];
   let currentPlayer = 0;
+  let isGameOver=false;
+  let winner=null;
+  const winCondition = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  const checkTermination = () => {
+    let i = 0;
+    j = 0;
+
+    for (i; i < 8; i++) {
+      if (
+        gameBoard.gameBoardArray[winCondition[i][j]] ===
+          gameBoard.gameBoardArray[winCondition[i][j + 1]] &&
+        gameBoard.gameBoardArray[winCondition[i][j + 1]] ===
+          gameBoard.gameBoardArray[winCondition[i][j + 2]] &&
+        gameBoard.gameBoardArray[winCondition[i][j]] != "" &&
+        gameBoard.gameBoardArray[winCondition[i][j + 1]] != "" &&
+        gameBoard.gameBoardArray[winCondition[i][j + 2]] != ""
+      ) {
+        console.log("someone won!");
+        if (currentPlayer === 0) {
+          console.log("x won");
+          console.log(players[currentPlayer].name);
+          isGameOver=true;
+          return players[currentPlayer].name;
+        } else {
+          console.log("O won");
+          isGameOver=true;
+          console.log(players[currentPlayer].name);
+          return players[currentPlayer].name;
+        }
+      }
+    }
+    if (!gameBoard.gameBoardArray.includes("")) {
+      console.log("Draw");
+      isGameOver=true;
+      return -1;
+    }
+  };
+
+  // const getRoundInfo=()=>{
+  //   if(isGameOver===true && checkTermination()!=-1){
+  //     console.log(`${currentPlayer} has won the round!?`)
+
+  //   }
+  // }
 
   const getPlayers = () => {
     players = [
@@ -88,9 +142,11 @@ const gameController = (function () {
   };
 
   const handleClick = (index) => {
-    if (gameBoard.gameBoardArray[index] === "") {
+    if (gameBoard.gameBoardArray[index] === "" && !isGameOver) {
       gameBoard.gameBoardArray[index] = `${players[currentPlayer].marker}`;
       gameBoard.render();
+      checkTermination();
+      // getRoundInfo();
       switchPlayer();
     }
   };
@@ -111,6 +167,7 @@ const gameController = (function () {
     getPlayers,
     renderBoard,
     handleClick,
+    checkTermination,
     players,
     currentPlayer,
   };
