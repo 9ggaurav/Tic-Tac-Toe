@@ -2,6 +2,7 @@ const form = (() => {
   const startGameButton = document.getElementById("submitstartgame");
   const form = document.getElementById("controls");
   const heading = document.getElementById("heading");
+  let formSubmitted = false;
 
   const formDone = () => {
     form.remove();
@@ -16,15 +17,16 @@ const form = (() => {
 
     gameController.getPlayers();
     heading.innerText = `${players[0].name.toUpperCase()}  v/s  ${players[1].name.toUpperCase()}`;
-    gameBoard.render();
+    formSubmitted = true;
+    gameController.renderBoard();
 
     formDone();
   });
 
-  return { formDone };
+  return { formDone, formSubmitted };
 })();
 
-//stores state of board, display board and updates board
+//stores state of board, display board and updates board-----------------------------------------------------------------
 const gameBoard = (() => {
   const boardContainer = document.getElementById("gameboard");
   let gameBoardArray = ["", "", "", "", "", "", "", "", ""];
@@ -37,6 +39,8 @@ const gameBoard = (() => {
     boardContainer.style.gridTemplateColumns = "100px 100px 100px";
     boardContainer.style.gridTemplateRows = "100px 100px 100px";
     boardContainer.style.gap = "12px";
+    let cellid = 0;
+
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
         const cell = document.createElement("div");
@@ -47,23 +51,27 @@ const gameBoard = (() => {
         cell.style.alignItems = "center";
         cell.style.borderRadius = "12px";
         cell.style.justifyContent = "center";
+        cell.setAttribute("id", `${cellid++}`);
         cell.setAttribute("class", "cells");
-
         boardContainer.appendChild(cell);
       }
     }
+
+    const cells = document.querySelectorAll(".cells");
+    cells.forEach((cell) => {
+      cell.addEventListener("click", () => {
+        gameBoardArray[cell.id] = "X";
+      });
+    });
   };
-  const updateBoard = (position, mark) => {
-    console.log("marked");
-    gameBoardArray[position] = mark;
-  };
+
   return {
     render,
-    updateBoard,
+    gameBoardArray
   };
 })();
 
-//creates instance of new player by giving it name and marker
+//creates instance of new player by giving it name and marker--------------------------------------------------------
 const playerFactory = (name, marker) => {
   return {
     name,
@@ -71,9 +79,10 @@ const playerFactory = (name, marker) => {
   };
 };
 
-//controls all the game
+//controls all the game-----------------------------------------------------------------------------------------------
 const gameController = (function () {
   players = [];
+  let currentPlayer = 0;
 
   const getPlayers = () => {
     players = [
@@ -82,8 +91,14 @@ const gameController = (function () {
     ];
   };
 
+  const renderBoard=()=>{
+    gameBoard.render();
+  }
+
   return {
     getPlayers,
+    renderBoard,
     players,
+    currentPlayer,
   };
 })();

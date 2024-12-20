@@ -32,6 +32,10 @@ body {
 
 }
 
+.cell{
+  background-color: pink;
+}
+
 fieldset{
   padding: 2em;
   display: flex;
