@@ -7,35 +7,20 @@
     <link rel="stylesheet" href="../assets/style.css" />
   </head>
   <body>
+    <h1 id="heading">Tic Tac Toe</h1>
 
-    <h1>Tic Tac Toe</h1>
+    <div id="gameboard"></div>
+    <form id="controls">
+      <fieldset>
+        <legend>INFO</legend>
+        <label> Name : <input required type="text" id="player1name" placeholder="player1" /></label>
+        <label> Name: <input required type="text" id="player2name" placeholder="player2" /></label>
+        <button id="submitstartgame">Start</button>
+      </fieldset>
+    </form>
 
-    <dialog id="formdialog">
-      <form action="" id="gameform">
-        <fieldset class="player1">
-          <legend>You</legend>
-          <label for="player1name">Name : <input required type="text" id="player1name"></label>
-          <label for="player1marker">Marker : <select name="option" id="player1marker"><option value="x">X</option>
-          <option value="o">O</option></select></label>
-        </fieldset>
-        <fieldset class="player2">
-          <legend>OPPONENT</legend>
-          <label for="player2name">Name : <input required type="text" id="player2name"></label>
-          <label for="player2marker">Marker : <span id="player2marker">X</span></label>
-        </fieldset>
-        <button id="submitstartgame" type="submit" onclick="">Start</button>
-      </form>
-    </dialog>
-
-    <div class="container">
-      <div id="gameboard"></div>
-      <!-- <button id="start">START</button> -->
-        
-      </div>
-      <div id="roundmessage">message</div>
-      <div id="gameresult">Result</div>
-    </div>
-    
+    <div id="message">message</div>
+    <div id="result">result</div>
 
     <script src="../assets/script.js"></script>
   </body>
