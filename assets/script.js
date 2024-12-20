@@ -41,33 +41,29 @@ const gameBoard = (() => {
     boardContainer.style.gap = "12px";
     let cellid = 0;
 
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < cols; j++) {
-        const cell = document.createElement("div");
-        cell.innerText = gameBoardArray[i * cols + j];
-        cell.style.border = "1px solid black";
-        cell.style.fontSize = "3em";
-        cell.style.display = "flex";
-        cell.style.alignItems = "center";
-        cell.style.borderRadius = "12px";
-        cell.style.justifyContent = "center";
-        cell.setAttribute("id", `${cellid++}`);
-        cell.setAttribute("class", "cells");
-        boardContainer.appendChild(cell);
-      }
-    }
+    gameBoardArray.forEach((value, index) => {
+      const cell = document.createElement("div");
+      cell.innerText = value;
+      cell.style.border = "1px solid black";
+      cell.style.fontSize = "3em";
+      cell.style.display = "flex";
+      cell.style.alignItems = "center";
+      cell.style.borderRadius = "12px";
+      cell.style.justifyContent = "center";
+      cell.setAttribute("id", index);
+      cell.setAttribute("class", "cells");
 
-    const cells = document.querySelectorAll(".cells");
-    cells.forEach((cell) => {
       cell.addEventListener("click", () => {
-        gameBoardArray[cell.id] = "X";
+        gameController.handleClick(index);
       });
+
+      boardContainer.appendChild(cell);
     });
   };
 
   return {
     render,
-    gameBoardArray
+    gameBoardArray,
   };
 })();
 
@@ -91,13 +87,30 @@ const gameController = (function () {
     ];
   };
 
-  const renderBoard=()=>{
+  const handleClick = (index) => {
+    if (gameBoard.gameBoardArray[index] === "") {
+      gameBoard.gameBoardArray[index] = `${players[currentPlayer].marker}`;
+      gameBoard.render();
+      switchPlayer();
+    }
+  };
+
+  const switchPlayer = () => {
+    if (currentPlayer === 0) {
+      currentPlayer = 1;
+    } else {
+      currentPlayer = 0;
+    }
+  };
+
+  const renderBoard = () => {
     gameBoard.render();
-  }
+  };
 
   return {
     getPlayers,
     renderBoard,
+    handleClick,
     players,
     currentPlayer,
   };
