@@ -8,8 +8,10 @@ body {
   width: 100vw;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
+  /* padding-bottom: 50%; */
+  padding-top: 6vh;
 }
 
 /* #gameboard {
@@ -21,6 +23,16 @@ body {
 
 #gameboard{
   display: none;
+}
+
+h1, h2, h3{
+  opacity: 0.5;
+}
+
+#title{
+  font-size: 3em;
+  color: gray;
+  margin-bottom: 1em;
 }
 
 #controls{

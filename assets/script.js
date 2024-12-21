@@ -96,7 +96,6 @@ const playerFactory = (name, marker) => {
 const gameController = (function () {
   players = [];
 
-  let winner = null;
   const heading = document.getElementById("heading");
   const scoreBoard = document.getElementById("scoreboard");
   const message = document.getElementById("message");
