@@ -32,6 +32,18 @@ body {
 
 }
 
+#message{
+  display: none;
+  padding: 20px;
+  font-size: 2em;
+  color: gray;
+}
+
+#scoreboard{
+  padding: 20px;
+  color: gray;;
+}
+
 .cell{
   background-color: pink;
 }

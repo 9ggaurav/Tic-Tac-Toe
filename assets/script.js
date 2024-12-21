@@ -1,7 +1,6 @@
 const form = (() => {
   const startGameButton = document.getElementById("submitstartgame");
   const form = document.getElementById("controls");
-  const heading = document.getElementById("heading");
   let formSubmitted = false;
 
   const formDone = () => {
@@ -16,7 +15,7 @@ const form = (() => {
     }
 
     gameController.getPlayers();
-    heading.innerText = `${players[0].name.toUpperCase()}  v/s  ${players[1].name.toUpperCase()}`;
+    gameController.updateDisplay();
     formSubmitted = true;
     gameController.renderBoard();
 
@@ -24,6 +23,24 @@ const form = (() => {
   });
 
   return { formDone, formSubmitted };
+})();
+
+//stores all varialbes required for the game---------------------------------------------------------------------------
+const gameStats = (() => {
+  let currentPlayer = 0;
+  let isGameOver = false;
+  let isDraw = false;
+  let player1Score = 0;
+  let player2Score = 0;
+  let gameRound = 1;
+
+  return {
+    currentPlayer,
+    isGameOver,
+    player1Score,
+    player2Score,
+    gameRound,
+  };
 })();
 
 //stores state of board, display board and updates board-----------------------------------------------------------------
@@ -78,9 +95,16 @@ const playerFactory = (name, marker) => {
 //controls all the game-----------------------------------------------------------------------------------------------
 const gameController = (function () {
   players = [];
-  let currentPlayer = 0;
-  let isGameOver=false;
-  let winner=null;
+
+  let winner = null;
+  const heading = document.getElementById("heading");
+  const scoreBoard = document.getElementById("scoreboard");
+  const message = document.getElementById("message");
+  const restartButtonContainer = document.getElementById("restartbutton");
+  const restartButton = document.createElement("button");
+  restartButton.innerHTML = "play-again";
+  restartButton.setAttribute("id", "restartButton");
+
   const winCondition = [
     [0, 1, 2],
     [3, 4, 5],
@@ -107,32 +131,29 @@ const gameController = (function () {
         gameBoard.gameBoardArray[winCondition[i][j + 2]] != ""
       ) {
         console.log("someone won!");
-        if (currentPlayer === 0) {
+        if (gameStats.currentPlayer === 0) {
           console.log("x won");
-          console.log(players[currentPlayer].name);
-          isGameOver=true;
-          return players[currentPlayer].name;
+          console.log(players[gameStats.currentPlayer].name);
+          gameStats.isGameOver = true;
+          gameStats.player1Score++;
+          return players[gameStats.currentPlayer].name;
         } else {
           console.log("O won");
-          isGameOver=true;
-          console.log(players[currentPlayer].name);
-          return players[currentPlayer].name;
+          gameStats.isGameOver = true;
+          gameStats.player2Score++;
+          console.log(players[gameStats.currentPlayer].name);
+          return players[gameStats.currentPlayer].name;
         }
       }
     }
     if (!gameBoard.gameBoardArray.includes("")) {
       console.log("Draw");
-      isGameOver=true;
+      gameStats.isGameOver = true;
+      gameStats.isDraw = true;
+      message.innerText = "Round Draw";
       return -1;
     }
   };
-
-  // const getRoundInfo=()=>{
-  //   if(isGameOver===true && checkTermination()!=-1){
-  //     console.log(`${currentPlayer} has won the round!?`)
-
-  //   }
-  // }
 
   const getPlayers = () => {
     players = [
@@ -141,25 +162,69 @@ const gameController = (function () {
     ];
   };
 
+  const updateDisplay = () => {
+    if (gameStats.isGameOver && !gameStats.isDraw) {
+      message.innerText = `${players[
+        gameStats.currentPlayer
+      ].name.toUpperCase()} Wins`;
+      scoreBoard.innerText = `${players[0].name.toUpperCase()} : ${
+        gameStats.player1Score
+      } | ${players[1].name.toUpperCase()} : ${gameStats.player2Score}`;
+      restartButtonContainer.appendChild(restartButton);
+    } else if (gameStats.isGameOver && gameStats.isDraw) {
+      message.innerText = "Draw";
+      scoreBoard.innerText = `${players[0].name.toUpperCase()} : ${
+        gameStats.player1Score
+      } | ${players[1].name.toUpperCase()} : ${gameStats.player2Score}`;
+
+      restartButtonContainer.appendChild(restartButton);
+    } else {
+      heading.innerText = `${players[0].name.toUpperCase()}  v/s  ${players[1].name.toUpperCase()}`;
+
+      scoreBoard.innerText = `${players[0].name.toUpperCase()} : ${
+        gameStats.player1Score
+      } | ${players[1].name.toUpperCase()} : ${gameStats.player2Score}`;
+
+      message.style.display = "block";
+      message.innerText = `Round ${gameStats.gameRound}`;
+    }
+  };
+
   const handleClick = (index) => {
-    if (gameBoard.gameBoardArray[index] === "" && !isGameOver) {
-      gameBoard.gameBoardArray[index] = `${players[currentPlayer].marker}`;
+    if (gameBoard.gameBoardArray[index] === "" && !gameStats.isGameOver) {
+      gameBoard.gameBoardArray[index] = `${
+        players[gameStats.currentPlayer].marker
+      }`;
       gameBoard.render();
+
       checkTermination();
-      // getRoundInfo();
+      updateDisplay();
       switchPlayer();
     }
   };
 
   const switchPlayer = () => {
-    if (currentPlayer === 0) {
-      currentPlayer = 1;
+    if (gameStats.currentPlayer === 0) {
+      gameStats.currentPlayer = 1;
     } else {
-      currentPlayer = 0;
+      gameStats.currentPlayer = 0;
     }
   };
 
   const renderBoard = () => {
+    gameBoard.render();
+  };
+
+  restartButton.addEventListener("click", () => {
+    console.log("restart clicked")
+    restartRound();
+  });
+
+  const restartRound = () => {
+    gameBoard.gameBoardArray = ["", "", "", "", "", "", "", "", ""];
+    gameStats.isGameOver = false;
+    gameStats.isDraw = false;
+    gameStats.currentPlayer = 0;
     gameBoard.render();
   };
 
@@ -168,7 +233,7 @@ const gameController = (function () {
     renderBoard,
     handleClick,
     checkTermination,
+    updateDisplay,
     players,
-    currentPlayer,
   };
 })();
