@@ -33,6 +33,7 @@ const gameStats = (() => {
   let player1Score = 0;
   let player2Score = 0;
   let gameRound = 1;
+  let checkWin = false;
 
   return {
     currentPlayer,
@@ -40,6 +41,7 @@ const gameStats = (() => {
     player1Score,
     player2Score,
     gameRound,
+    checkWin,
   };
 })();
 
@@ -101,6 +103,7 @@ const gameController = (function () {
   const message = document.getElementById("message");
   const restartButtonContainer = document.getElementById("restartbutton");
   const restartButton = document.createElement("button");
+  const gameResult = document.getElementById("gameresultdisplay");
   restartButton.innerHTML = "play-again";
   restartButton.setAttribute("id", "restartButton");
 
@@ -162,7 +165,7 @@ const gameController = (function () {
   };
 
   const updateDisplay = () => {
-    if (gameStats.isGameOver && !gameStats.isDraw) {
+    if (gameStats.isGameOver && !gameStats.isDraw && !gameStats.checkWin) {
       message.innerText = `${players[
         gameStats.currentPlayer
       ].name.toUpperCase()} Wins`;
@@ -170,14 +173,18 @@ const gameController = (function () {
         gameStats.player1Score
       } | ${players[1].name.toUpperCase()} : ${gameStats.player2Score}`;
       restartButtonContainer.appendChild(restartButton);
-    } else if (gameStats.isGameOver && gameStats.isDraw) {
+    } else if (
+      gameStats.isGameOver &&
+      gameStats.isDraw &&
+      !gameStats.checkWin
+    ) {
       message.innerText = "Draw";
       scoreBoard.innerText = `${players[0].name.toUpperCase()} : ${
         gameStats.player1Score
       } | ${players[1].name.toUpperCase()} : ${gameStats.player2Score}`;
 
       restartButtonContainer.appendChild(restartButton);
-    } else {
+    } else if (!gameStats.checkWin) {
       heading.innerText = `${players[0].name.toUpperCase()}  v/s  ${players[1].name.toUpperCase()}`;
 
       scoreBoard.innerText = `${players[0].name.toUpperCase()} : ${
@@ -190,7 +197,11 @@ const gameController = (function () {
   };
 
   const handleClick = (index) => {
-    if (gameBoard.gameBoardArray[index] === "" && !gameStats.isGameOver) {
+    if (
+      gameBoard.gameBoardArray[index] === "" &&
+      !gameStats.isGameOver &&
+      !gameStats.checkWin
+    ) {
       gameBoard.gameBoardArray[index] = `${
         players[gameStats.currentPlayer].marker
       }`;
@@ -215,16 +226,39 @@ const gameController = (function () {
   };
 
   restartButton.addEventListener("click", () => {
-    console.log("restart clicked")
+    console.log("restart clicked");
     restartRound();
   });
 
+  const checkWin = () => {
+    if (gameStats.gameRound === 5) {
+      gameStats.checkWin = true;
+      heading.style.color = "black";
+      heading.style.opacity = "1";
+      // alert("Game Over");
+      if (gameStats.player1score === gameStats.player2Score) {
+        heading.innerText = `Game Draw. ${gameStats.player1Score} - ${gameStats.player2Score}`;
+      } else if (gameStats.player1Score > gameStats.player2Score) {
+        heading.innerText = `${players[0].name} Won by ${
+          gameStats.player1Score - gameStats.player2Score
+        } Point/s`;
+      } else {
+        heading.innerText = `${players[1].name} Won by ${
+          gameStats.player2Score - gameStats.player1Score
+        } Point/s`;
+      }
+    }
+  };
+
   const restartRound = () => {
-    gameBoard.gameBoardArray = ["", "", "", "", "", "", "", "", ""];
+    checkWin();
+    gameBoard.gameBoardArray.fill("");
     gameStats.isGameOver = false;
     gameStats.isDraw = false;
     gameStats.currentPlayer = 0;
     gameBoard.render();
+    message.innerHTML = `Round ${++gameStats.gameRound}`;
+    restartButton.remove();
   };
 
   return {
