@@ -103,7 +103,7 @@ const gameController = (function () {
   const message = document.getElementById("message");
   const restartButtonContainer = document.getElementById("restartbutton");
   const restartButton = document.createElement("button");
-  const gameResult = document.getElementById("gameresultdisplay");
+
   restartButton.innerHTML = "play-again";
   restartButton.setAttribute("id", "restartButton");
 
@@ -235,7 +235,7 @@ const gameController = (function () {
       gameStats.checkWin = true;
       heading.style.color = "black";
       heading.style.opacity = "1";
-      // alert("Game Over");
+
       if (gameStats.player1score === gameStats.player2Score) {
         heading.innerText = `Game Draw. ${gameStats.player1Score} - ${gameStats.player2Score}`;
       } else if (gameStats.player1Score > gameStats.player2Score) {
